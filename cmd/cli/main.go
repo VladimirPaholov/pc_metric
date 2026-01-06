@@ -4,102 +4,31 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"pc_metric/internal/database"
 	"pc_metric/internal/logger"
 	"pc_metric/internal/metrics/cpu"
 	net "pc_metric/internal/metrics/net_int"
 	"pc_metric/internal/metrics/ram"
+	"pc_metric/repository"
+
 	"time"
 
 	"github.com/joho/godotenv"
 )
-
-// func main() {
-// 	//Загрузка файла переменных окружения
-// 	if err := godotenv.Load(); err != nil {
-// 		fmt.Println("File .env not found")
-// 	}
-
-// 	//стандартное  время работы приложения 1минута, если не передано иное
-// 	timeWorkDefault := flag.Duration("d", 1*time.Minute, "Default time for metrics monitoring - 1 min") // -d 2m, -d 30s, -d 1h
-
-// 	flag.Parse()
-
-// 	if *timeWorkDefault <= 0 {
-// 		fmt.Println("Duration must be > 0")
-// 		os.Exit(1)
-// 	}
-
-// 	ticker := time.NewTicker(1 * time.Second) // как часто собирать метрики
-// 	defer ticker.Stop()
-
-// 	timer := time.NewTimer(*timeWorkDefault) // общее время работы программы
-// 	defer timer.Stop()
-
-// 	//done := make(chan struct{})
-
-// 	err := logger.InitLogger()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	defer logger.Close()
-
-// 	logger.SystemMessage("=== Start getting CPU & RAM metric ===")
-// 	logger.SystemMessage("=== Initialization... The network interface speed will be available in 10 seconds ===")
-
-// 	// go func() {
-// 	// 	<-timer.C
-// 	// 	close(done)
-// 	// }()
-
-// 	for {
-// 		select {
-// 		case <-ticker.C:
-
-// 			_, _, _, netMsg, err := net.NetMetric()
-// 			if err != nil {
-// 				fmt.Println("Error", err)
-
-// 			}
-
-// 			la := cpu.GetLoadAverage()
-// 			r := ram.GetMemInfo()
-
-// 			message := fmt.Sprintf("Load average is: 1 min: %.2f, 5 min: %.2f, 15 min: %.2f | RAM: %v/%vGB (%vGB free) | NET: %s ", la.Load1, la.Load5, la.Load15, r[0], r[1], r[2], netMsg)
-
-// 			logger.LogMetric(message)
-
-// 		case <-timer.C:
-// 			logger.SystemMessage("\n=== END ===")
-// 			fmt.Println("Exit")
-// 			return
-// 		}
-
-// 	}
-
-// }
 
 func main() {
 	//Загрузка файла переменных окружения
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("File .env not found")
 	}
-	cfg := database.Config{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		DBname:   os.Getenv("DB_NAME"),
-		SSLmode:  os.Getenv("DB_SSLMODE"),
-	}
 
-	db, err := database.NewDB(cfg)
+	db, err := repository.DBconnection()
 	if err != nil {
 		os.Exit(1)
 	}
 	defer db.Close()
-	err = database.NewTable(db)
-	if err != nil {
+	repo := repository.New(db)
+
+	if err := repo.CreateTable(); err != nil {
 		os.Exit(1)
 	}
 
@@ -157,7 +86,6 @@ func main() {
 			r := ram.GetMemInfo()
 
 			message := fmt.Sprintf(logger.LogMessage, la.Load1, la.Load5, la.Load15, r[0], r[1], r[2], netMsg)
-			err = database.InsertLogMetric(db, logger.TimeStamp(), message)
 			if err != nil {
 				logger.SystemMessage("DB insert error: " + err.Error())
 			}
