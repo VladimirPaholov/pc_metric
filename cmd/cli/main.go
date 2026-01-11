@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
-	"pc_metric/internal/lifecycle"
+	"pc_metric/internal/app"
 	"pc_metric/internal/service"
 	"pc_metric/repository"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -16,7 +18,10 @@ func main() {
 		metricInterval time.Duration
 	)
 
-	service.GetENV()
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("File .env not found")
+		os.Exit(1)
+	}
 
 	db, err := repository.DBconnection()
 	if err != nil {
@@ -39,5 +44,5 @@ func main() {
 		metricInterval = t.DefaultTimeMetric
 	}
 
-	lifecycle.Start(workTime, metricInterval, db)
+	app.Start(workTime, metricInterval, db)
 }
