@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"pc_metric/internal/lifecycle"
 	"pc_metric/internal/service"
@@ -21,13 +22,12 @@ func main() {
 	if err != nil {
 		os.Exit(1)
 	}
-	defer db.Close()
-	repo := repository.New(db)
+	defer db.DB.Close()
 
-	if err := repo.CreateTable(); err != nil {
+	if err := db.RunMigration(); err != nil {
+		fmt.Println("Migration error:", err)
 		os.Exit(1)
 	}
-
 	t := service.NewTimeStruct()
 
 	cfg := service.ParseFlags(t.DefaultTimeWork, t.DefaultTimeMetric)
@@ -39,5 +39,5 @@ func main() {
 		metricInterval = t.DefaultTimeMetric
 	}
 
-	lifecycle.Start(workTime, metricInterval, repo)
+	lifecycle.Start(workTime, metricInterval, db)
 }

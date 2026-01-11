@@ -1,4 +1,4 @@
-package lifecycle
+package app
 
 import (
 	"fmt"
@@ -35,8 +35,8 @@ func Start(workTime, interval time.Duration, repo *repository.DataBase) {
 
 			message := fmt.Sprintf(logger.LogMessage, la.Load1, la.Load5, la.Load15, r[0], r[1], r[2], netMsg)
 
-			errDB := repo.InsertData(logger.TimeStamp(), message)
-			if errDB != nil {
+			err = repo.InsertData(logger.TimeStamp(), message)
+			if err != nil {
 				logger.SystemMessage("DB insert error: " + err.Error())
 			}
 
