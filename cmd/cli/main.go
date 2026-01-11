@@ -33,15 +33,15 @@ func main() {
 		fmt.Println("Migration error:", err)
 		os.Exit(1)
 	}
-	t := service.NewTimeStruct()
+	t := service.NewTimeCfg()
 
-	cfg := service.ParseFlags(t.DefaultTimeWork, t.DefaultTimeMetric)
+	cfg := service.ParseFlags(t.DefaultTimeWork, t.DefaultTimeGetMetric)
 	if cfg.CustomWorkTime > 0 {
 		workTime = cfg.CustomWorkTime
 		metricInterval = cfg.CustomMetricInterval
 	} else {
 		workTime = t.DefaultTimeWork
-		metricInterval = t.DefaultTimeMetric
+		metricInterval = t.DefaultTimeGetMetric
 	}
 
 	app.Start(workTime, metricInterval, db)
