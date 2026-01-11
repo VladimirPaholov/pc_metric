@@ -6,37 +6,32 @@ import (
 	"time"
 )
 
-type TimeStruct struct {
-	DefaultTimeWork   time.Duration
-	DefaultTimeMetric time.Duration
+type TimeCfg struct {
+	DefaultTimeWork      time.Duration
+	DefaultTimeGetMetric time.Duration
 }
 
-func NewTimeStruct() *TimeStruct {
-	t := &TimeStruct{}
-
-	t.ReadTimeValue()
-	t.ReadTimeGetMetrics()
-	return t
-}
-
-func (t *TimeStruct) ReadTimeValue() {
-	readValue := os.Getenv("DEFAULT_TIME_WORK")
-
-	d, err := time.ParseDuration(readValue)
-	if err != nil {
-		fmt.Printf("Parse error time from .env: %v. Set default time 1m\n", err)
-		d = 1 * time.Minute
+func NewTimeCfg() *TimeCfg {
+	return &TimeCfg{
+		DefaultTimeWork:      ParseTimeCfg("DEFAULT_TIME_WORK", 1*time.Minute),
+		DefaultTimeGetMetric: ParseTimeCfg("DEFAULT_TIME_GET_METRIC", 1*time.Second),
 	}
-	t.DefaultTimeWork = d
 }
 
-func (t *TimeStruct) ReadTimeGetMetrics() {
-	readValue := os.Getenv("DEFAULT_TIME_GET_METRIC")
+func ParseTimeCfg(env string, defaultValue time.Duration) time.Duration {
+	value := os.Getenv(env)
 
-	d, err := time.ParseDuration(readValue)
-	if err != nil {
-		fmt.Printf("Error parse getting time metric: %v. Set default time 1s\n", err)
-		d = 1 * time.Second
+	if value == "" {
+		fmt.Printf("ENV %s is not set, using default: %v\n", env, defaultValue)
+		return defaultValue
 	}
-	t.DefaultTimeMetric = d
+
+	d, err := time.ParseDuration(value)
+	if err != nil {
+		fmt.Printf("Failed to parse %s=%s,. Set default time %v: %v\n", env, value, defaultValue, err)
+
+		return defaultValue
+
+	}
+	return d
 }
