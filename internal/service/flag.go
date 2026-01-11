@@ -20,6 +20,11 @@ func ParseFlags(d time.Duration, i time.Duration) FlagConfig {
 
 	flag.Parse()
 
+	if work == nil || metric == nil {
+		fmt.Printf("Return nil pointer %v:%v", work, metric)
+		os.Exit(1)
+	}
+
 	if *work <= 0 {
 		fmt.Println("Duration work time must be > 0")
 		os.Exit(1)
