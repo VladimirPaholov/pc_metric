@@ -47,12 +47,27 @@ func DBconnection() (*DataBase, error) {
 
 func (d *DataBase) RunMigration() error {
 
-	absPath, err := filepath.Abs("repository/migrations/pg")
+	cwd, err := os.Getwd()
+
 	if err != nil {
-		return err
+		return fmt.Errorf("Error get current dir: %v", err)
 	}
 
-	migration, err := migrate.New("file://"+absPath, d.Dsn)
+	pathWorkDir := os.Getenv("WORK_DIR_PATH")
+
+	if pathWorkDir == "" {
+		pathWorkDir = cwd
+	}
+
+	pathToMigration := filepath.Join(pathWorkDir, "migrations/pg")
+
+	absMigrationPath, err := filepath.Abs(pathToMigration)
+
+	if err != nil {
+		return fmt.Errorf("Failed to get absolute path for %s: %w", absMigrationPath, err)
+	}
+
+	migration, err := migrate.New("file://"+filepath.ToSlash(absMigrationPath), d.Dsn)
 	if err != nil {
 		return err
 	}
