@@ -42,13 +42,12 @@ func DBconnection() (*Repository, error) {
 
 	fmt.Println("Connected to data base - successfull!")
 
-	return &Repository{DB: db, Dsn: dsn}, nil
+	return &Repository{DB: db}, nil
 }
 
 func (d *Repository) RunMigration() error {
 
 	cwd, err := os.Getwd()
-
 	if err != nil {
 		return fmt.Errorf("Error get current dir: %v", err)
 	}
@@ -67,7 +66,7 @@ func (d *Repository) RunMigration() error {
 		return fmt.Errorf("Failed to get absolute path for %s: %w", absMigrationPath, err)
 	}
 
-	migration, err := migrate.New("file://"+filepath.ToSlash(absMigrationPath), d.Dsn)
+	migration, err := migrate.New("file://"+filepath.ToSlash(absMigrationPath), BuildPostgreDSN())
 	if err != nil {
 		return err
 	}

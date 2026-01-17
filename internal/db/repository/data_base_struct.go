@@ -2,7 +2,6 @@ package repository
 
 import "database/sql"
 
-type DataBase struct {
-	DB  *sql.DB
-	Dsn string
+type Repository struct {
+	DB *sql.DB
 }
