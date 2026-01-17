@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func Start(workTime, interval time.Duration, repo *repository.DataBase) {
+func Start(workTime, interval time.Duration, repo *repository.Repository) {
 	d := time.NewTimer(workTime)
 	defer d.Stop()
 

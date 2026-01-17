@@ -13,7 +13,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func DBconnection() (*DataBase, error) {
+func DBconnection() (*Repository, error) {
 
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
@@ -42,10 +42,10 @@ func DBconnection() (*DataBase, error) {
 
 	fmt.Println("Connected to data base - successfull!")
 
-	return &DataBase{DB: db, Dsn: dsn}, nil
+	return &Repository{DB: db, Dsn: dsn}, nil
 }
 
-func (d *DataBase) RunMigration() error {
+func (d *Repository) RunMigration() error {
 
 	cwd, err := os.Getwd()
 
@@ -79,7 +79,7 @@ func (d *DataBase) RunMigration() error {
 	return nil
 }
 
-func (d *DataBase) InsertData(createdAt time.Time, message string) error {
+func (d *Repository) InsertData(createdAt time.Time, message string) error {
 	_, err := d.DB.Exec(
 		`INSERT INTO logs_metric (created_at, message)
  		VALUES ($1, $2)`,
