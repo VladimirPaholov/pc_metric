@@ -2,11 +2,11 @@ package app
 
 import (
 	"fmt"
+	"pc_metric/internal/db/repository"
 	"pc_metric/internal/logger"
 	"pc_metric/internal/metrics/cpu"
 	net "pc_metric/internal/metrics/net_int"
 	"pc_metric/internal/metrics/ram"
-	"pc_metric/repository"
 
 	"time"
 )

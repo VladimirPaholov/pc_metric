@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"pc_metric/internal/app"
+	"pc_metric/internal/db/repository"
 	"pc_metric/internal/service"
-	"pc_metric/repository"
 	"time"
 
 	"github.com/joho/godotenv"
