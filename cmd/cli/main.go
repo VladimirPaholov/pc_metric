@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 	"pc_metric/internal/app"
-	"pc_metric/internal/db/repository"
+	"pc_metric/internal/db"
+	"pc_metric/internal/db/migrations"
 	"pc_metric/internal/service"
 	"time"
 
@@ -23,13 +24,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	db, err := repository.DBconnection()
+	db, err := db.InitDB()
 	if err != nil {
 		os.Exit(1)
 	}
 	defer db.DB.Close()
 
-	if err := db.RunMigration(); err != nil {
+	if err := migrations.RunMigration(); err != nil {
 		fmt.Println("Migration error:", err)
 		os.Exit(1)
 	}
