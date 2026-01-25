@@ -10,7 +10,7 @@ import (
 
 func InitDB() (*repository.Repository, error) {
 
-	urlDB := repository.BuildPostgreDSN()
+	urlDB := BuildPostgreDSN()
 
 	db, err := sql.Open("postgres", urlDB)
 	if err != nil {

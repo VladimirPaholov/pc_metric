@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"pc_metric/internal/db/repository"
+	"pc_metric/internal/db"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -33,7 +33,7 @@ func RunMigration() error {
 		return fmt.Errorf("Failed to get absolute path for %s: %w", absMigrationPath, err)
 	}
 
-	migration, err := migrate.New("file://"+filepath.ToSlash(absMigrationPath), repository.BuildPostgreDSN())
+	migration, err := migrate.New("file://"+filepath.ToSlash(absMigrationPath), db.BuildPostgreDSN())
 	if err != nil {
 		return err
 	}
