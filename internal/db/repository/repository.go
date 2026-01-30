@@ -1,7 +1,18 @@
 package repository
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type Repository struct {
-	DB *sql.DB
+	db *sql.DB
+}
+
+type MetricRepository interface {
+	AddMetricDB(timestamp time.Time, message string) error
+}
+
+func NewRepository(db *sql.DB) *Repository {
+	return &Repository{db: db}
 }

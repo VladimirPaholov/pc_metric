@@ -6,6 +6,7 @@ import (
 	"pc_metric/internal/app"
 	"pc_metric/internal/db"
 	"pc_metric/internal/db/migrations"
+	"pc_metric/internal/db/repository"
 	"pc_metric/internal/service"
 	"time"
 
@@ -28,7 +29,8 @@ func main() {
 	if err != nil {
 		os.Exit(1)
 	}
-	defer db.DB.Close()
+	defer db.Close()
+	repo := repository.NewRepository(db)
 
 	if err := migrations.RunMigration(); err != nil {
 		fmt.Println("Migration error:", err)
@@ -45,5 +47,5 @@ func main() {
 		metricInterval = t.DefaultTimeGetMetric
 	}
 
-	app.Start(workTime, metricInterval, db)
+	app.Start(workTime, metricInterval, repo)
 }

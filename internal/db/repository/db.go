@@ -7,8 +7,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func (d *Repository) AddMetricDB(createdAt time.Time, message string) error {
-	_, err := d.DB.Exec(
+func (r *Repository) AddMetricDB(createdAt time.Time, message string) error {
+	_, err := r.db.Exec(
 		`INSERT INTO logs_metric (created_at, message)
  		VALUES ($1, $2)`,
 		createdAt,
