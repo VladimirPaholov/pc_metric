@@ -4,3 +4,4 @@ app_log.txt
 .env
 .test.go
 docker-compose.yaml
+data/
