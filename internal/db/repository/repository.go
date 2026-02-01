@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -9,10 +10,19 @@ type Repository struct {
 	db *sql.DB
 }
 
-type MetricRepository interface {
-	AddMetricDB(timestamp time.Time, message string) error
-}
-
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
+}
+
+func (r *Repository) AddMetricDB(createdAt time.Time, message string) error {
+	_, err := r.db.Exec(
+		`INSERT INTO logs_metric (created_at, message)
+ 		VALUES ($1, $2)`,
+		createdAt,
+		message,
+	)
+	if err != nil {
+		return fmt.Errorf("Insert log error: %w", err)
+	}
+	return nil
 }

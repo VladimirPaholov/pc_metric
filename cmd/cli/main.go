@@ -22,15 +22,16 @@ func main() {
 
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("File .env not found")
-		os.Exit(1)
+		panic(err)
 	}
 
 	db, err := db.InitDB()
 	if err != nil {
-		os.Exit(1)
+		panic(err)
 	}
 	defer db.Close()
 	repo := repository.NewRepository(db)
+	userService := service.NewUserService(repo)
 
 	if err := migrations.RunMigration(); err != nil {
 		fmt.Println("Migration error:", err)
@@ -47,5 +48,5 @@ func main() {
 		metricInterval = t.DefaultTimeGetMetric
 	}
 
-	app.Start(workTime, metricInterval, repo)
+	app.Start(workTime, metricInterval, userService)
 }

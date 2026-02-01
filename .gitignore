@@ -3,3 +3,4 @@ app_log.txt
 .DS_Store
 .env
 .test.go
+docker-compose.yaml

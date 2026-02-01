@@ -2,16 +2,16 @@ package app
 
 import (
 	"fmt"
-	"pc_metric/internal/db/repository"
 	"pc_metric/internal/logger"
 	"pc_metric/internal/metrics/cpu"
 	net "pc_metric/internal/metrics/net_int"
 	"pc_metric/internal/metrics/ram"
+	"pc_metric/internal/service"
 
 	"time"
 )
 
-func Start(workTime, interval time.Duration, repo repository.MetricRepository) {
+func Start(workTime, interval time.Duration, repo service.MetricRepository) {
 	d := time.NewTimer(workTime)
 	defer d.Stop()
 
