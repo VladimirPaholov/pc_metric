@@ -35,7 +35,7 @@ func Start(workTime, interval time.Duration, repo service.MetricRepository) {
 
 			message := fmt.Sprintf(logger.LogMessage, la.Load1, la.Load5, la.Load15, r[0], r[1], r[2], netMsg)
 
-			err = repo.AddMetricDB(logger.TimeStamp(), message)
+			err = repo.AddMetric(logger.TimeStamp(), message)
 			if err != nil {
 				logger.SystemMessage("DB insert error: " + err.Error())
 			}

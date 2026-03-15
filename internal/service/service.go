@@ -5,9 +5,6 @@ import (
 	"time"
 )
 
-type MetricRepository interface {
-	AddMetricDB(timestamp time.Time, message string) error
-}
 type UserService struct {
 	repo MetricRepository
 }
@@ -15,9 +12,9 @@ type UserService struct {
 func NewUserService(repo MetricRepository) *UserService {
 	return &UserService{repo: repo}
 }
-func (u *UserService) AddMetricDB(createdAt time.Time, message string) error {
+func (u *UserService) AddMetric(createdAt time.Time, message string) error {
 	if message == "" {
-		return errors.New("message if empty")
+		return errors.New("message is empty")
 	}
-	return u.repo.AddMetricDB(time.Now(), message)
+	return u.repo.AddMetric(time.Now(), message)
 }

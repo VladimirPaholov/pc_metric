@@ -22,7 +22,7 @@ func main() {
 
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("File .env not found")
-		panic(err)
+		os.Exit(1)
 	}
 
 	db, err := db.InitDB()

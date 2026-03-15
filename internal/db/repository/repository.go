@@ -13,8 +13,8 @@ type Repository struct {
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
-
-func (r *Repository) AddMetricDB(createdAt time.Time, message string) error {
+//add units (create table)
+func (r *Repository) AddMetric(createdAt time.Time, message string) error {
 	_, err := r.db.Exec(
 		`INSERT INTO logs_metric (created_at, message)
  		VALUES ($1, $2)`,
