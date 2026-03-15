@@ -26,8 +26,9 @@ func Start(workTime, interval time.Duration, repo service.MetricRepository) {
 		case <-i.C:
 			_, _, _, netMsg, err := net.NetMetric()
 			if err != nil {
-				fmt.Println("Error", err)
-
+				//fmt.Println("Error", err)
+				logger.SysLogger.Error("network metric failed", "error", err)
+				continue
 			}
 
 			la := cpu.GetLoadAverage()
@@ -35,11 +36,14 @@ func Start(workTime, interval time.Duration, repo service.MetricRepository) {
 
 			message := fmt.Sprintf(logger.LogMessage, la.Load1, la.Load5, la.Load15, r[0], r[1], r[2], netMsg)
 
+			//save to DB
 			err = repo.AddMetric(logger.TimeStamp(), message)
 			if err != nil {
-				logger.SystemMessage("DB insert error: " + err.Error())
-			}
+				//logger.SystemMessage("DB insert error: " + err.Error())
+				logger.SysLogger.Error("DB insert failed", "error", err)
 
+			}
+			//refresh live-data metric
 			logger.LogMetric(message)
 
 		case <-d.C:

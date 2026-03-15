@@ -13,7 +13,8 @@ type Repository struct {
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
-//add units (create table)
+
+// add units (create table)
 func (r *Repository) AddMetric(createdAt time.Time, message string) error {
 	_, err := r.db.Exec(
 		`INSERT INTO logs_metric (created_at, message)
@@ -22,7 +23,7 @@ func (r *Repository) AddMetric(createdAt time.Time, message string) error {
 		message,
 	)
 	if err != nil {
-		return fmt.Errorf("Insert log error: %w", err)
+		return fmt.Errorf("insert log error: %w", err)
 	}
 	return nil
 }

@@ -20,6 +20,5 @@ func InitDB() (*sql.DB, error) {
 	if errPing != nil {
 		return nil, fmt.Errorf("data base ping error: %w", errPing)
 	}
-	fmt.Println("Connected to data base - successfull!")
 	return db, nil
 }
