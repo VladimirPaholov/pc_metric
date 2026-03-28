@@ -1,13 +1,16 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
 	"pc_metric/internal/app"
 	"pc_metric/internal/db"
 	"pc_metric/internal/db/migrations"
 	"pc_metric/internal/db/repository"
 	"pc_metric/internal/logger"
 	"pc_metric/internal/service"
+	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -19,6 +22,10 @@ func main() {
 		workTime,
 		metricInterval time.Duration
 	)
+	//shutdown
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	logger.InitSysLogger()
 	logger.SysLogger.Info("service started")
 
@@ -36,9 +43,11 @@ func main() {
 	}
 	logger.SysLogger.Info("connected to database is successfully")
 	defer db.Close()
+
 	repo := repository.NewRepository(db)
 	userService := service.NewUserService(repo)
 
+	//sql migration
 	logger.SysLogger.Info("running migrations")
 	if err := migrations.RunMigration(); err != nil {
 		logger.SysLogger.Error("database migration failed", "error", err)
@@ -57,5 +66,5 @@ func main() {
 		metricInterval = t.DefaultTimeGetMetric
 	}
 
-	app.Start(workTime, metricInterval, userService)
+	app.Start(ctx, workTime, metricInterval, userService)
 }

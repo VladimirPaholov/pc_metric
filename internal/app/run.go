@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"pc_metric/internal/logger"
 	"pc_metric/internal/metrics/cpu"
@@ -11,7 +12,7 @@ import (
 	"time"
 )
 
-func Start(workTime, interval time.Duration, repo service.MetricRepository) {
+func Start(ctx context.Context, workTime, interval time.Duration, repo service.MetricRepository) {
 	d := time.NewTimer(workTime)
 	defer d.Stop()
 
@@ -49,6 +50,9 @@ func Start(workTime, interval time.Duration, repo service.MetricRepository) {
 		case <-d.C:
 			logger.SystemMessage("\n=== END ===")
 			fmt.Println("Exit")
+			return
+		case <-ctx.Done():
+			logger.SysLogger.Info("metrics stopped")
 			return
 		}
 	}
